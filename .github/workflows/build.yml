@@ -1,17 +1,33 @@
-- name: Build ISO
+name: Build Furry OS ISO
+on:
+  push:
+    branches: [ "main" ]
+  release:
+    types: [ "published" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y live-build debootstrap squashfs-tools xorriso isolinux syslinux-utils mtools dosfstools
+
+      - name: Build ISO
         run: |
           export DEBIAN_FRONTEND=noninteractive
           chmod +x config/hooks/chroot/*.bin config/hooks/live/*.bin 2>/dev/null || true
           sudo lb clean --purge
-          sudo rm -rf chroot/ cache/     # 彻底清除缓存，确保重新下载
+          sudo rm -rf chroot/ cache/
           sudo rm -f auto/config
           sudo env \
-            DEBIAN_FRONTEND=noninteractive \
             LB_BOOTSTRAP=ubuntu \
             LB_DISTRIBUTION=jammy \
             LB_ARCHITECTURES=amd64 \
-            LB_MIRROR_BOOTSTRAP=https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ \
-            LB_MIRROR_CHROOT=https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ \
+            LB_MIRROR_BOOTSTRAP=http://archive.ubuntu.com/ubuntu/ \
+            LB_MIRROR_CHROOT=http://archive.ubuntu.com/ubuntu/ \
             LB_INSTALLER=calamares \
             LB_TASKS=ubuntu-desktop-minimal \
             LB_IMAGE_NAME=furry-os \
@@ -24,3 +40,9 @@
             LB_ISO_FILENAME=furry-os-amd64.iso \
             lb config
           sudo lb build
+
+      - name: Upload ISO as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: furry-os-amd64.iso
+          path: ./live-image-amd64.hybrid.iso
