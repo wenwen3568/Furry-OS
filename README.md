@@ -1,26 +1,26 @@
-#  Furry OS 为毛毛们的操作系统
+🐾 Furry OS — 属于毛毛们的操作系统
 
 > 一款基于 Ubuntu，为福瑞爱好者量身定制的 Linux 发行版。  
 > 开机即见温暖爪印，轻松运行 Windows 游戏与软件。  
 > **Furry 元素无处不在，从安装到桌面，全程陪伴。**
 
-![Furry OS 壁纸示例](https://via.placeholder.com/800x400?text=+Your+Furry+Wallpaper+Here)  
-*(�将你的壁纸放在 `config/includes.chroot/usr/share/backgrounds/furry-wallpaper.png` 即可替换)*
+![Furry OS 壁纸示例](https://via.placeholder.com/800x400?text=🐾+Your+Furry+Wallpaper+Here)  
+*(将你的壁纸放在 `config/includes.chroot/usr/share/backgrounds/furry-wallpaper.png` 即可替换)*
 
 ---
 
 ## ✨ 特色亮点
 
-- **️自带 Furry 主题壁纸** —— 默认壁纸融入爪印与暖色，开机即沉浸。
--  **兽爪品牌图标** —— 安装程序、启动菜单都带有专属爪印 Logo，充满个性。
--  **内置 Wine 兼容层** —— 直接运行 `.exe` 程序，玩转 Windows 游戏与工具。
--  **️图形化安装向导** —— 基于 Calamares，几步完成安装，分区、建账户全图形界面。
--  **本地账户 + 开机登录** —— 安装时创建专属账号，重启后安全登录。
--  **轻量、流畅** —— 基于 GNOME 桌面，适配现代 x64 硬件，操作体验丝滑。
+- 🖼️ **自带 Furry 主题壁纸** —— 默认壁纸融入爪印与暖色，开机即沉浸。
+- 🐾 **小兽爪品牌图标** —— 安装程序、启动菜单都带有专属爪印 Logo，充满个性。
+- 🎮 **内置 Wine 兼容层** —— 直接运行 `.exe` 程序，玩转 Windows 游戏与工具。
+- 🖥️ **图形化安装向导** —— 基于 Calamares，几步完成安装，分区、建账户全图形界面。
+- 🔒 **本地账户 + 开机登录** —— 安装时创建专属账号，重启后安全登录。
+- 🚀 **轻量、流畅** —— 基于 GNOME 桌面，适配现代 x64 硬件，操作体验丝滑。
 
 ---
 
-##  下载与安装
+## 📥 下载与安装
 
 ### 1. 获取 ISO 镜像
 - 访问本仓库的 **Releases** 页面，下载最新的 `furry-os-amd64.iso`。
@@ -44,7 +44,7 @@
 
 ---
 
-##  如何使用 Windows 软件
+## 🎮 如何使用 Windows 软件
 
 安装完成后，你可以通过以下方式运行 Windows 程序：
 
@@ -52,11 +52,11 @@
 - **图形界面**：右键点击 `.exe` 文件，选择“用 Wine 打开”
 - 高级用户可安装 **Bottles** 或 **PlayOnLinux** 管理多版本 Wine 环境
 
->  提示：首次运行 Wine 时会自动安装 Mono 和 Gecko 组件，请保持网络畅通。
+> 💡 提示：首次运行 Wine 时会自动安装 Mono 和 Gecko 组件，请保持网络畅通。
 
 ---
 
-##  ️开发者 & 自定义构建
+## 🛠️ 开发者 & 自定义构建
 
 本项目使用 `live-build` 构建，所有定制化脚本均开源。如果你想自己构建 ISO：
 
@@ -74,6 +74,5 @@ sudo lb config
 sudo lb build
 构建完成后，ISO 文件位于 live-image-amd64.hybrid.iso。
 
-你也可以通过 GitHub Actions 自动构建 —— 推送代码到 main 分支或创建 Release 即可触发构建完成后，ISO 文件位于 live-image-amd64.hybrid.iso。
-
+你也可以通过 GitHub Actions 自动构建 —— 推送代码到 main 分支或创建 Release 即可触发
 
