@@ -1,19 +1,18 @@
 #!/bin/bash
 set -e
-lb config \
-    --bootstrap ubuntu \
-    --distribution jammy \
-    --architectures amd64 \
-    --mirror-bootstrap https://mirrors.ustc.edu.cn/ubuntu/ \
-    --mirror-chroot https://mirrors.ustc.edu.cn/ubuntu/ \
-    --installer calamares \
-    --tasks ubuntu-desktop-minimal \
-    --image-name furry-os \
-    --iso-application "Furry OS" \
-    --package-lists "base desktop" \
-    --hook-dir config/hooks \
-    --includes config/includes.chroot \
-    --iso-hybrid true \
-    --uefi-image true \
-    --iso-filename furry-os-amd64.iso \
-    --debootstrap-options "--components=main,universe,multiverse"
+export LB_BOOTSTRAP="ubuntu"
+export LB_DISTRIBUTION="jammy"
+export LB_ARCHITECTURES="amd64"
+export LB_MIRROR_BOOTSTRAP="https://mirrors.ustc.edu.cn/ubuntu/"
+export LB_MIRROR_CHROOT="https://mirrors.ustc.edu.cn/ubuntu/"
+export LB_INSTALLER="calamares"
+export LB_TASKS="ubuntu-desktop-minimal"
+export LB_IMAGE_NAME="furry-os"
+export LB_ISO_APPLICATION="Furry OS"
+export LB_PACKAGE_LISTS="base desktop"
+export LB_HOOK_DIR="config/hooks"
+export LB_INCLUDES="config/includes.chroot"
+export LB_ISO_HYBRID="true"
+export LB_UEFI_IMAGE="true"
+export LB_ISO_FILENAME="furry-os-amd64.iso"
+export LB_DEBOOTSTRAP_OPTIONS="--components=main,universe,multiverse"
