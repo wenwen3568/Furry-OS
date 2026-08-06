@@ -20,7 +20,7 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           chmod +x config/hooks/chroot/*.bin config/hooks/live/*.bin 2>/dev/null || true
           sudo lb clean --purge
-          sudo rm -rf chroot/ cache/
+          sudo rm -rf chroot/ cache/ build/
           sudo rm -f auto/config
           sudo env \
             LB_BOOTSTRAP=ubuntu \
