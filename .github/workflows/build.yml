@@ -46,3 +46,14 @@ jobs:
         with:
           name: furry-os-amd64.iso
           path: ./live-image-amd64.hybrid.iso
+
+      - name: Upload to Release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./live-image-amd64.hybrid.iso
+          asset_name: furry-os-amd64.iso
+          asset_content_type: application/octet-stream
