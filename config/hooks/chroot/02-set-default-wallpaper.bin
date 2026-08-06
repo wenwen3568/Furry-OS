@@ -1,0 +1,9 @@
+#!/bin/bash -e
+WALLPAPER_FILE="/usr/share/backgrounds/furry-wallpaper.png"
+mkdir -p /etc/dconf/db/local.d
+cat > /etc/dconf/db/local.d/00-wallpaper << WALL
+[org/gnome/desktop/background]
+picture-uri='file://${WALLPAPER_FILE}'
+picture-uri-dark='file://${WALLPAPER_FILE}'
+WALL
+dconf update

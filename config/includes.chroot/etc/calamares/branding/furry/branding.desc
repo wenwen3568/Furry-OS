@@ -1,0 +1,17 @@
+---
+componentName: furry
+welcomeStyle: default
+welcomeText: " �欢迎来到 Furry OS 的世界！\n这里充满温暖与爪印，开始你的冒险吧！"
+windowWidth: 800
+windowHeight: 520
+productName: "Furry OS"
+productUrl: "https://github.com/your-repo"
+productIcon: "logo.svg"
+wallpaper: "wallpaper.png"
+style:
+  sidebarBackground: "#FF8C00"
+  sidebarText: "#FFFFFF"
+  mainBackground: "#2C2C2C"
+  mainText: "#FFFFFF"
+  buttonBackground: "#FF8C00"
+  buttonText: "#FFFFFF"

@@ -1,0 +1,4 @@
+#!/bin/bash -e
+if [ -d /home/ubuntu ]; then
+    sudo -u ubuntu dbus-launch gsettings set org.gnome.desktop.background picture-uri "file:///usr/share/backgrounds/furry-wallpaper.png" 2>/dev/null || true
+fi

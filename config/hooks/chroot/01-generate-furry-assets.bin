@@ -1,0 +1,26 @@
+#!/bin/bash -e
+# 生成壁纸（如果不存在）
+if [ ! -f "/usr/share/backgrounds/furry-wallpaper.png" ]; then
+    if command -v convert &>/dev/null; then
+        convert -size 1920x1080 gradient:#FF8C00-#FF4500 -font Ubuntu -pointsize 120 -fill white -gravity center -annotate +0+0 " Furry OS" /usr/share/backgrounds/furry-wallpaper.png
+    else
+        # fallback: �纯色占位
+        dd if=/dev/zero of=/usr/share/backgrounds/furry-wallpaper.png bs=1M count=1 2>/dev/null || touch /usr/share/backgrounds/furry-wallpaper.png
+    fi
+fi
+
+# 生成爪印 SVG 图标
+mkdir -p /etc/calamares/branding/furry/images
+cat > /etc/calamares/branding/furry/images/logo.svg << 'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="30" cy="70" r="15" fill="#FF8C00"/>
+  <circle cx="70" cy="70" r="15" fill="#FF8C00"/>
+  <circle cx="50" cy="85" r="18" fill="#FF8C00"/>
+  <circle cx="20" cy="40" r="12" fill="#FF8C00"/>
+  <circle cx="80" cy="40" r="12" fill="#FF8C00"/>
+  <text x="50" y="30" font-size="20" text-anchor="middle" fill="#FF8C00" font-family="sans-serif"></text>
+</svg>
+SVG
+
+# �将壁纸复制到 Calamares 品牌目录（作为安装背景）
+cp /usr/share/backgrounds/furry-wallpaper.png /etc/calamares/branding/furry/images/wallpaper.png
