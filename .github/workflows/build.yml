@@ -19,9 +19,14 @@ jobs:
         run: |
           export DEBIAN_FRONTEND=noninteractive
           chmod +x config/hooks/chroot/*.bin config/hooks/live/*.bin 2>/dev/null || true
+
+          # 彻底清理所有残留
           sudo lb clean --purge
-          sudo rm -rf chroot/ cache/ build/
+          sudo dpkg-divert --remove /usr/sbin/start-stop-daemon 2>/dev/null || true
+          sudo rm -rf chroot/ cache/ build/ config/chroot
           sudo rm -f auto/config
+
+          # 重新配置并构建
           sudo env \
             LB_BOOTSTRAP=ubuntu \
             LB_DISTRIBUTION=jammy \
