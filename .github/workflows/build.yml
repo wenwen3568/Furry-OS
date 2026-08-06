@@ -14,8 +14,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y live-build debootstrap squashfs-tools xorriso isolinux syslinux-utils mtools dosfstools
       - name: Clean and Build
         run: |
+          sudo chmod +x auto/config
           sudo lb clean --purge
-          rm -rf config/          # 彻底删除旧的配置缓存，让 lb config 重新从 auto/config 生成
           sudo lb config
           sudo lb build
       - uses: actions/upload-artifact@v4
