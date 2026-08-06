@@ -2,7 +2,6 @@
 LB_BOOTSTRAP="ubuntu"
 LB_DISTRIBUTION="jammy"
 LB_ARCHITECTURES="amd64"
-# 推荐换用国内镜像源，速度更快
 LB_MIRROR_BOOTSTRAP="https://mirrors.ustc.edu.cn/ubuntu/"
 LB_MIRROR_CHROOT="https://mirrors.ustc.edu.cn/ubuntu/"
 LB_INSTALLER="calamares"
