@@ -1,1 +1,15 @@
-gnome-shell gnome-terminal nautilus gnome-control-center gnome-tweaks lightdm lightdm-gtk-greeter calamares wine wine-gecko wine-mono fonts-wine imagemagick
+# 桌面核心
+gnome-shell
+gnome-terminal
+nautilus
+gnome-control-center
+gnome-tweaks
+lightdm
+
+# 安装程序（用官方源里的版本）
+calamares
+
+# Wine（需要先添加 32 位架构和 Wine 官方源）
+wine64
+wine32
+fonts-wine
