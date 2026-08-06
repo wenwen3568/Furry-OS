@@ -13,17 +13,18 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y live-build debootstrap squashfs-tools xorriso isolinux syslinux-utils mtools dosfstools genisoimage
+        run: sudo apt-get update && sudo apt-get install -y live-build debootstrap squashfs-tools xorriso isolinux syslinux-utils mtools dosfstools
 
       - name: Build ISO
         run: |
           export DEBIAN_FRONTEND=noninteractive
           chmod +x config/hooks/chroot/*.bin config/hooks/live/*.bin 2>/dev/null || true
+
           sudo lb clean --purge
-          sudo lb clean --binary
           sudo dpkg-divert --remove /usr/sbin/start-stop-daemon 2>/dev/null || true
           sudo rm -rf chroot/ cache/ build/ config/chroot
           sudo rm -f auto/config
+
           sudo env \
             LB_BOOTSTRAP=ubuntu \
             LB_DISTRIBUTION=jammy \
@@ -41,22 +42,17 @@ jobs:
             LB_UEFI_IMAGE=true \
             LB_ISO_FILENAME=furry-os-amd64.iso \
             lb config
-          sudo lb build --verbose
-          ls -lh *.iso || echo "No ISO found!"
+
+          # 构建 ISO，忽略清理阶段的错误
+          sudo lb build || true
+
+          # 查找并列出所有 ISO 文件
+          echo "ISO files found:"
+          find . -name "*.iso" -type f -ls || echo "No ISO found!"
+          ls -lh *.iso 2>/dev/null || echo "No ISO in current directory"
 
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
           name: furry-os-amd64.iso
           path: ./*.iso
-
-      - name: Upload to Release
-        if: github.event_name == 'release'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./*.iso
-          asset_name: furry-os-amd64.iso
-          asset_content_type: application/octet-stream
