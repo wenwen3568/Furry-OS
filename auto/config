@@ -14,3 +14,5 @@ LB_INCLUDES="config/includes.chroot"
 LB_ISO_HYBRID="true"
 LB_UEFI_IMAGE="true"
 LB_ISO_FILENAME="furry-os-amd64.iso"
+# 强制使用指定的组件，避免自动选择错误
+LB_DEBOOTSTRAP_OPTIONS="--components=main,universe,multiverse"
