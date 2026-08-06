@@ -1,15 +1,15 @@
-# 桌面核心
-gnome-shell
+# 基础桌面（包含 GNOME、LightDM 等）
+ubuntu-desktop-minimal
+
+# 安装程序
+calamares
+
+# 常用工具
 gnome-terminal
 nautilus
 gnome-control-center
 gnome-tweaks
-lightdm
 
-# 安装程序（用官方源里的版本）
-calamares
-
-# Wine（需要先添加 32 位架构和 Wine 官方源）
-wine64
-wine32
+# Wine（32/64 位兼容层）
+wine
 fonts-wine
