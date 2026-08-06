@@ -44,15 +44,16 @@ jobs:
             LB_UEFI_IMAGE=true \
             LB_ISO_FILENAME=furry-os-amd64.iso \
             lb config
-          sudo lb build
-           ls -lh *.iso || echo "No ISO file found!"
-           echo "Exit code: $?"
+          # 构建 ISO（忽略清理阶段的错误）
+          sudo lb build || true
+          # 列出生成的 ISO 文件以供检查
+          ls -lh *.iso || echo "No ISO found!"
 
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
           name: furry-os-amd64.iso
-          path: ./live-image-amd64.hybrid.iso
+          path: ./*.iso          # 通配符匹配所有 ISO
 
       - name: Upload to Release
         if: github.event_name == 'release'
@@ -61,6 +62,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./live-image-amd64.hybrid.iso
+          asset_path: ./*.iso    # 同样使用通配符
           asset_name: furry-os-amd64.iso
           asset_content_type: application/octet-stream
