@@ -44,7 +44,9 @@ jobs:
             LB_UEFI_IMAGE=true \
             LB_ISO_FILENAME=furry-os-amd64.iso \
             lb config
-          sudo lb build || { echo "lb build finished with warning, ignoring"; }
+          sudo lb build
+           ls -lh *.iso || echo "No ISO file found!"
+           echo "Exit code: $?"
 
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
