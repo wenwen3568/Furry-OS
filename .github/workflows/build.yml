@@ -14,9 +14,29 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y live-build debootstrap squashfs-tools xorriso isolinux syslinux-utils mtools dosfstools
       - name: Clean and Build
         run: |
-          sudo chmod +x auto/config
           sudo lb clean --purge
-          sudo lb config
+          sudo rm -rf config/
+          # 禁用 auto/config 脚本，避免干扰
+          sudo mv auto/config auto/config.bak
+          # 设置所有需要的环境变量
+          export LB_BOOTSTRAP="ubuntu"
+          export LB_DISTRIBUTION="jammy"
+          export LB_ARCHITECTURES="amd64"
+          export LB_MIRROR_BOOTSTRAP="https://mirrors.ustc.edu.cn/ubuntu/"
+          export LB_MIRROR_CHROOT="https://mirrors.ustc.edu.cn/ubuntu/"
+          export LB_INSTALLER="calamares"
+          export LB_TASKS="ubuntu-desktop-minimal"
+          export LB_IMAGE_NAME="furry-os"
+          export LB_ISO_APPLICATION="Furry OS"
+          export LB_PACKAGE_LISTS="base desktop"
+          export LB_HOOK_DIR="config/hooks"
+          export LB_INCLUDES="config/includes.chroot"
+          export LB_ISO_HYBRID="true"
+          export LB_UEFI_IMAGE="true"
+          export LB_ISO_FILENAME="furry-os-amd64.iso"
+          export LB_DEBOOTSTRAP_OPTIONS="--components=main,universe,multiverse"
+          # 使用 sudo -E 以保留环境变量
+          sudo -E lb config
           sudo lb build
       - uses: actions/upload-artifact@v4
         with:
