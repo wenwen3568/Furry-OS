@@ -1,21 +1,15 @@
 #!/bin/bash -e
-# 启用 32 位架构
+# 启用 32 位架构（Ubuntu 源里的 wine 需要）
 dpkg --add-architecture i386
 
-# 添加 Wine 官方源
-mkdir -p /etc/apt/keyrings
-wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-echo "deb [signed-by=/etc/apt/keyrings/winehq-archive.key] https://dl.winehq.org/wine-builds/ubuntu/ jammy main" > /etc/apt/sources.list.d/winehq-jammy.list
-
-# 更新源并安装软件包
+# 更新源
 apt-get update
+
+# 安装所需软件包（全部来自 Ubuntu 官方源）
 apt-get install -y \
     calamares \
     gnome-tweaks \
-    winehq-stable
-
-# ===== 强制移除 dpkg-divert 冲突 =====
-dpkg-divert --remove /usr/sbin/start-stop-daemon 2>/dev/null || true
+    wine
 
 # 清理缓存
 apt-get clean
