@@ -22,11 +22,10 @@ jobs:
 
           # 清理
           sudo lb clean --purge
-          sudo dpkg-divert --remove /usr/sbin/start-stop-daemon 2>/dev/null || true
           sudo rm -rf chroot/ cache/ build/ config/chroot
           sudo rm -f auto/config
 
-          # 配置
+          # 配置（显式加入 LB_BINARY_IMAGES）
           sudo env \
             LB_BOOTSTRAP=ubuntu \
             LB_DISTRIBUTION=jammy \
@@ -43,22 +42,38 @@ jobs:
             LB_ISO_HYBRID=true \
             LB_UEFI_IMAGE=true \
             LB_ISO_FILENAME=furry-os-amd64.iso \
+            LB_BINARY_IMAGES=iso \
             lb config
 
-          # 构建（忽略清理阶段的错误）
-          sudo lb build || true
+          # 分步构建，忽略错误（确保 lb binary 一定会执行）
+          echo "=== Step 1: Bootstrap ==="
+          sudo lb bootstrap || true
 
-          # 强制从 binary/ 提取 ISO
-          echo "=== Extracting ISO from binary/ ==="
-          ls -la binary/ || echo "binary/ not found"
+          echo "=== Step 2: Chroot ==="
+          sudo lb chroot || true
+
+          echo "=== Step 3: Binary (this generates the ISO) ==="
+          sudo lb binary || true
+
+          # ===== 强制提取 ISO =====
+          echo "=== Extracting ISO ==="
           if [ -d "binary" ]; then
-            cp binary/*.iso ./furry-os-amd64.iso 2>/dev/null && echo "ISO copied!" || echo "No ISO in binary/"
-          else
-            echo "binary/ directory does not exist."
+            cp binary/*.iso ./furry-os-amd64.iso 2>/dev/null && echo "ISO copied from binary/!" || echo "No ISO in binary/"
           fi
 
-          # 显示当前目录的 ISO
-          ls -lh *.iso || echo "No ISO in current directory"
+          # 如果 binary/ 中没有，尝试全局搜索
+          if [ ! -f ./furry-os-amd64.iso ]; then
+            echo "Searching whole workspace..."
+            find . -name "*.iso" -type f -not -path "./chroot/*" -print -exec cp {} ./furry-os-amd64.iso \; 2>/dev/null
+          fi
+
+          # 显示结果
+          if [ -f ./furry-os-amd64.iso ]; then
+            ls -lh ./furry-os-amd64.iso
+          else
+            echo "ERROR: No ISO found after all attempts!"
+            exit 1
+          fi
 
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
