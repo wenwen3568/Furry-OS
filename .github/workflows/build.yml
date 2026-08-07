@@ -14,22 +14,6 @@ jobs:
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y live-build debootstrap squashfs-tools xorriso isolinux syslinux-utils mtools dosfstools
-       name: Build Furry OS ISO
-on:
-  push:
-    branches: [ "main" ]
-  release:
-    types: [ "published" ]
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y live-build debootstrap squashfs-tools xorriso isolinux syslinux-utils mtools dosfstools
 
       - name: Build ISO
         run: |
@@ -72,11 +56,6 @@ jobs:
             exit 1
           fi
 
-      - name: Upload ISO as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: furry-os-amd64.iso
-          path: ./furry-os-amd64.iso
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
