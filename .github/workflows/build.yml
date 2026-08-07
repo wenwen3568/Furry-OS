@@ -25,56 +25,39 @@ jobs:
           sudo rm -rf chroot/ cache/ build/ config/chroot
           sudo rm -f auto/config
 
-          # 配置（显式加入 LB_BINARY_IMAGES）
-          sudo env \
-            LB_BOOTSTRAP=ubuntu \
-            LB_DISTRIBUTION=jammy \
-            LB_ARCHITECTURES=amd64 \
-            LB_MIRROR_BOOTSTRAP=http://archive.ubuntu.com/ubuntu/ \
-            LB_MIRROR_CHROOT=http://archive.ubuntu.com/ubuntu/ \
-            LB_INSTALLER=calamares \
-            LB_TASKS=ubuntu-desktop-minimal \
-            LB_IMAGE_NAME=furry-os \
-            LB_ISO_APPLICATION="Furry OS" \
-            LB_PACKAGE_LISTS="base desktop" \
-            LB_HOOK_DIR=config/hooks \
-            LB_INCLUDES=config/includes.chroot \
-            LB_ISO_HYBRID=true \
-            LB_UEFI_IMAGE=true \
-            LB_ISO_FILENAME=furry-os-amd64.iso \
-            LB_BINARY_IMAGES=iso \
-            lb config
+          # 配置（参考教程使用 lb config 直接传参，更可靠）
+          sudo lb config \
+            --bootstrap ubuntu \
+            --distribution jammy \
+            --architectures amd64 \
+            --mirror-bootstrap http://archive.ubuntu.com/ubuntu/ \
+            --mirror-chroot http://archive.ubuntu.com/ubuntu/ \
+            --installer calamares \
+            --tasks ubuntu-desktop-minimal \
+            --image-name furry-os \
+            --iso-application "Furry OS" \
+            --package-lists "base desktop" \
+            --hook-dir config/hooks \
+            --includes config/includes.chroot \
+            --iso-hybrid true \
+            --uefi-image true \
+            --iso-filename furry-os-amd64.iso \
+            --binary-images iso
 
-          # 分步构建，忽略错误（确保 lb binary 一定会执行）
-          echo "=== Step 1: Bootstrap ==="
-          sudo lb bootstrap || true
+          # 分步构建（不执行清理）
+          echo "=== Bootstrap ===" && sudo lb bootstrap || true
+          echo "=== Chroot ===" && sudo lb chroot || true
+          echo "=== Binary (generates ISO) ===" && sudo lb binary || true
 
-          echo "=== Step 2: Chroot ==="
-          sudo lb chroot || true
-
-          echo "=== Step 3: Binary (this generates the ISO) ==="
-          sudo lb binary || true
-
-          # ===== 强制提取 ISO =====
-          echo "=== Extracting ISO ==="
+          # 提取 ISO
           if [ -d "binary" ]; then
-            cp binary/*.iso ./furry-os-amd64.iso 2>/dev/null && echo "ISO copied from binary/!" || echo "No ISO in binary/"
+            cp binary/*.iso ./furry-os-amd64.iso 2>/dev/null || true
           fi
-
-          # 如果 binary/ 中没有，尝试全局搜索
+          # 如果没找到，暴力搜索
           if [ ! -f ./furry-os-amd64.iso ]; then
-            echo "Searching whole workspace..."
-            find . -name "*.iso" -type f -not -path "./chroot/*" -print -exec cp {} ./furry-os-amd64.iso \; 2>/dev/null
+            find . -name "*.iso" -type f -not -path "./chroot/*" -exec cp {} ./furry-os-amd64.iso \; 2>/dev/null
           fi
-
-          # 显示结果
-          if [ -f ./furry-os-amd64.iso ]; then
-            ls -lh ./furry-os-amd64.iso
-          else
-            echo "ERROR: No ISO found after all attempts!"
-            exit 1
-          fi
-
+          ls -lh ./furry-os-amd64.iso || exit 1
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
