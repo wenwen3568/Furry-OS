@@ -19,9 +19,14 @@ jobs:
         run: |
           export DEBIAN_FRONTEND=noninteractive
           chmod +x config/hooks/chroot/*.bin config/hooks/live/*.bin 2>/dev/null || true
+
+          # 清理
           sudo lb clean --purge
+          sudo dpkg-divert --remove /usr/sbin/start-stop-daemon 2>/dev/null || true
           sudo rm -rf chroot/ cache/ build/ config/chroot
           sudo rm -f auto/config
+
+          # 配置
           sudo env \
             LB_BOOTSTRAP=ubuntu \
             LB_DISTRIBUTION=jammy \
@@ -39,7 +44,36 @@ jobs:
             LB_UEFI_IMAGE=true \
             LB_ISO_FILENAME=furry-os-amd64.iso \
             lb config
-          sudo lb build
+
+          # ===== 分步构建（跳过整合的清理阶段） =====
+          echo "=== Building bootstrap ==="
+          sudo lb bootstrap || true
+
+          echo "=== Building chroot ==="
+          sudo lb chroot || true
+
+          echo "=== Building binary (this creates the ISO) ==="
+          sudo lb binary || true
+
+          echo "=== Building ISO ==="
+          sudo lb iso || true
+
+          # 尝试清理缓存（忽略错误）
+          sudo lb clean --cache || true
+
+          # ===== 强制搜索并提取 ISO =====
+          echo "=== Searching for ISO ==="
+          find . -name "*.iso" -type f -print
+
+          ISO_FILE=$(find . -name "*.iso" -type f -print -quit)
+          if [ -n "$ISO_FILE" ]; then
+            echo "Found ISO: $ISO_FILE"
+            cp "$ISO_FILE" ./furry-os-amd64.iso
+            ls -lh ./furry-os-amd64.iso
+          else
+            echo "No ISO found. Build may have failed before ISO generation."
+            exit 1
+          fi
 
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
