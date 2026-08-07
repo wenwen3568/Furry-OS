@@ -1,0 +1,26 @@
+[org/gnome/desktop/interface]
+gtk-theme='Yaru-dark'          # 使用深色主题更显高级
+icon-theme='Yaru'
+cursor-theme='Yaru'
+font-name='Ubuntu 11'
+
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/furry-wallpaper.png'
+picture-uri-dark='file:///usr/share/backgrounds/furry-wallpaper.png'
+
+[org/gnome/shell/extensions/dash-to-dock]
+dock-position='BOTTOM'
+extend-height=false
+
+[org/gnome/desktop/session]
+idle-delay=uint32 900
+
+[org/gnome/desktop/lockdown]
+disable-lock-screen=false
+
+# 设置终端配色（可选）
+[org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+use-theme-colors=false
+background-color='#2C2C2C'
+foreground-color='#FFFFFF'
+palette=['#073642', '#DC322F', '#859900', '#B58900', '#268BD2', '#D33682', '#2AA198', '#EEE8D5', '#002B36', '#CB4B16', '#586E75', '#657B83', '#839496', '#6C71C4', '#93A1A1', '#FDF6E3']
