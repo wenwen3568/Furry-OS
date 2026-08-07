@@ -41,27 +41,27 @@ jobs:
             LB_ISO_HYBRID=true \
             LB_UEFI_IMAGE=true \
             LB_ISO_FILENAME=furry-os-amd64.iso \
-            LB_CHROOT_DPKG_REMOVE="false" \
             lb config
 
-          # 构建 ISO
+          # 构建 ISO（忽略清理阶段的错误）
           sudo lb build || true
 
-          # 检查 binary/ 目录
-          echo "=== Checking binary/ directory ==="
+          # ===== 关键：强制从 binary/ 提取 ISO =====
+          echo "=== Extracting ISO from binary/ ==="
           ls -la binary/ || echo "binary/ not found"
 
-          # 复制 ISO 到当前目录
           if [ -d "binary" ]; then
-            cp binary/*.iso ./furry-os-amd64.iso 2>/dev/null || echo "No ISO in binary/"
+            # 复制所有 ISO 文件到当前目录
+            cp binary/*.iso ./furry-os-amd64.iso 2>/dev/null && echo "ISO copied successfully!" || echo "No ISO in binary/"
+          else
+            echo "binary/ directory does not exist."
           fi
 
-          # 检查当前目录
+          # 显示当前目录的 ISO
           ls -lh *.iso || echo "No ISO in current directory"
-            
-      
+
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
           name: furry-os-amd64.iso
-          path: ./*.iso
+          path: ./furry-os-amd64.iso
