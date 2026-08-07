@@ -14,7 +14,7 @@ apt-get install -y \
     gnome-tweaks \
     winehq-stable
 
-# ===== 关键修复：提前撤销 dpkg-divert =====
+# ===== 关键修复：提前撤销 dpkg-divert 修改 =====
 dpkg-divert --remove /usr/sbin/start-stop-daemon 2>/dev/null || true
 
 # 清理缓存
