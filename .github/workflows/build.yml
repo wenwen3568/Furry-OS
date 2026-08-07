@@ -46,11 +46,35 @@ jobs:
           # 构建 ISO，忽略清理阶段的错误
           sudo lb build || true
 
-          # 查找并列出所有 ISO 文件
-          echo "ISO files found:"
-          find . -name "*.iso" -type f -ls || echo "No ISO found!"
-          ls -lh *.iso 2>/dev/null || echo "No ISO in current directory"
+          # 查找 ISO 文件：优先在 binary/ 目录下查找
+          echo "=== Searching for ISO in binary/ ==="
+          if [ -d "binary" ]; then
+            ls -lh binary/*.iso || echo "No ISO in binary/"
+            ISO_FILE=$(find binary/ -maxdepth 1 -name "*.iso" -type f -print -quit)
+          else
+            echo "binary directory not found, searching in current dir"
+            ISO_FILE=$(find . -maxdepth 1 -name "*.iso" -type f -print -quit)
+          fi
 
+          if [ -n "$ISO_FILE" ]; then
+            echo "Found ISO: $ISO_FILE"
+            cp "$ISO_FILE" ./furry-os-amd64.iso
+            ls -lh ./furry-os-amd64.iso
+          else
+            echo "No ISO file found in binary/ or current directory!"
+            # 如果没找到，尝试在整个项目目录搜索（但跳过权限问题）
+            echo "Trying full search (ignoring permission errors)..."
+            ISO_FILE=$(find . -name "*.iso" -type f -not -path "./chroot/*" -print -quit 2>/dev/null)
+            if [ -n "$ISO_FILE" ]; then
+              echo "Found ISO via full search: $ISO_FILE"
+              cp "$ISO_FILE" ./furry-os-amd64.iso
+              ls -lh ./furry-os-amd64.iso
+            else
+              echo "Still no ISO found. Build may have failed."
+              exit 1
+            fi
+          fi
+      
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
