@@ -1,9 +1,15 @@
 #!/bin/bash -e
-WALLPAPER_FILE="/usr/share/backgrounds/furry-wallpaper.png"
+# 复制 dconf 配置文件
 mkdir -p /etc/dconf/db/local.d
+cp /path/to/00-furry-settings /etc/dconf/db/local.d/00-furry-settings
+
+# 设置壁纸（已存在）
+WALLPAPER_FILE="/usr/share/backgrounds/furry-wallpaper.png"
 cat > /etc/dconf/db/local.d/00-wallpaper << WALL
 [org/gnome/desktop/background]
 picture-uri='file://${WALLPAPER_FILE}'
 picture-uri-dark='file://${WALLPAPER_FILE}'
 WALL
+
+# 更新数据库
 dconf update
