@@ -20,13 +20,10 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           chmod +x config/hooks/chroot/*.bin config/hooks/live/*.bin 2>/dev/null || true
 
-          # 清理
           sudo lb clean --purge
-          sudo dpkg-divert --remove /usr/sbin/start-stop-daemon 2>/dev/null || true
           sudo rm -rf chroot/ cache/ build/ config/chroot
           sudo rm -f auto/config
 
-          # 配置
           sudo env \
             LB_BOOTSTRAP=ubuntu \
             LB_DISTRIBUTION=jammy \
@@ -45,34 +42,7 @@ jobs:
             LB_ISO_FILENAME=furry-os-amd64.iso \
             lb config
 
-          # ===== 分步构建（跳过清理阶段） =====
-          echo "=== Step 1: Bootstrap ==="
-          sudo lb bootstrap || true
-
-          echo "=== Step 2: Build chroot ==="
-          sudo lb chroot || true
-
-          echo "=== Step 3: Build binary (generates ISO) ==="
-          sudo lb binary || true
-
-          echo "=== Step 4: Build ISO (finalize) ==="
-          sudo lb iso || true
-
-          # ===== 强制从 binary/ 提取 ISO =====
-          echo "=== Extracting ISO from binary/ ==="
-          ls -la binary/ || echo "binary/ not found"
-
-          if [ -d "binary" ]; then
-            # 复制所有 ISO 文件到当前目录
-            cp binary/*.iso ./furry-os-amd64.iso 2>/dev/null && echo "ISO copied successfully!" || echo "No ISO in binary/"
-          else
-            echo "binary/ directory does not exist."
-            # 尝试在当前目录查找 ISO
-            find . -name "*.iso" -type f -print -exec cp {} ./furry-os-amd64.iso \; 2>/dev/null || echo "No ISO found in current dir"
-          fi
-
-          # 显示当前目录的 ISO
-          ls -lh *.iso || echo "No ISO in current directory"
+          sudo lb build
 
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
