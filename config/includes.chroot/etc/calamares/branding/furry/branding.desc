@@ -1,7 +1,7 @@
 ---
 componentName: furry
 welcomeStyle: default
-welcomeText: " �欢迎来到 Furry OS 的世界！\n这里充满温暖与爪印，开始你的冒险吧！"
+welcomeText: "欢迎使用Furry OS系统"
 windowWidth: 800
 windowHeight: 520
 productName: "Furry OS"
