@@ -19,11 +19,9 @@ jobs:
         run: |
           export DEBIAN_FRONTEND=noninteractive
           chmod +x config/hooks/chroot/*.bin config/hooks/live/*.bin 2>/dev/null || true
-
           sudo lb clean --purge
           sudo rm -rf chroot/ cache/ build/ config/chroot
           sudo rm -f auto/config
-
           sudo env \
             LB_BOOTSTRAP=ubuntu \
             LB_DISTRIBUTION=jammy \
@@ -41,7 +39,6 @@ jobs:
             LB_UEFI_IMAGE=true \
             LB_ISO_FILENAME=furry-os-amd64.iso \
             lb config
-
           sudo lb build
 
       - name: Upload ISO as artifact
