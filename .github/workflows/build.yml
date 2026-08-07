@@ -19,24 +19,46 @@ jobs:
         run: |
           export DEBIAN_FRONTEND=noninteractive
           chmod +x config/hooks/chroot/*.bin config/hooks/live/*.bin 2>/dev/null || true
-          chmod +x auto/config
+          # 删除 auto/config 避免干扰
+          sudo rm -f auto/config
 
           # 清理
           sudo lb clean --purge
           sudo rm -rf chroot/ cache/ binary/ config/chroot
 
-          # 配置（auto/config 会自动读取）
-          sudo lb config
+          # 使用环境变量配置
+          sudo env \
+            LB_BOOTSTRAP=ubuntu \
+            LB_DISTRIBUTION=jammy \
+            LB_ARCHITECTURES=amd64 \
+            LB_MIRROR_BOOTSTRAP=http://archive.ubuntu.com/ubuntu/ \
+            LB_MIRROR_CHROOT=http://archive.ubuntu.com/ubuntu/ \
+            LB_MIRROR_CHROOT_SECURITY=http://security.ubuntu.com/ubuntu/ \
+            LB_INSTALLER=calamares \
+            LB_TASKS=ubuntu-desktop-minimal \
+            LB_IMAGE_NAME=furry-os \
+            LB_ISO_APPLICATION="Furry OS" \
+            LB_PACKAGE_LISTS="base desktop" \
+            LB_HOOK_DIR=config/hooks \
+            LB_INCLUDES=config/includes.chroot \
+            LB_ISO_HYBRID=true \
+            LB_UEFI_IMAGE=true \
+            LB_ISO_FILENAME=furry-os-amd64.iso \
+            LB_BINARY_IMAGES=iso \
+            lb config
 
-          # 分步构建（跳过清理阶段）
+          # 检查配置生成情况
+          ls -la .build/ || echo ".build not found"
+
+          # 分步构建（遇到错误即停止）
           echo "=== Bootstrap ==="
-          sudo lb bootstrap || true
+          sudo lb bootstrap
 
           echo "=== Chroot ==="
-          sudo lb chroot || true
+          sudo lb chroot
 
           echo "=== Binary (generates ISO) ==="
-          sudo lb binary || true
+          sudo lb binary
 
           # 提取 ISO
           echo "=== Extracting ISO ==="
@@ -55,7 +77,6 @@ jobs:
             echo "ERROR: No ISO found!"
             exit 1
           fi
-
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
